@@ -231,20 +231,3 @@ btn.pack(side=tk.LEFT, padx=20)
 root.title("PFE")
 root.geometry("600x500")
 root.mainloop()
-
-
-'''
-plt.subplot(221)
-plt.imshow(mar,'gray') #grayscale image
-plt.title('Original')
-
-plt.subplot(222)
-#plt.imshow(font)
-plt.imshow(new_im6) #grayscale image
-plt.title('Font')
-
-plt.subplot(223)
-plt.imshow(new_im7) #grayscale image
-plt.title('Text')
-
-plt.show()'''
