@@ -20,8 +20,6 @@ img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
 mat = np.array(img)  # Transformation de l'image en matrice
 
-# print(mat)
-
 
 # Creation des matrices replis par des zéros
 dx = np.zeros(im.size)
@@ -46,11 +44,6 @@ def derive2x(mat):
 
 
 d2x = derive2x(mat)
-'''
-new_im4 = Image.fromarray(d2x) # Engeristrement de d2x (image)
-if new_im4.mode != 'RGB':
-    new_im4 = new_im4.convert('RGB')
-new_im4.save("d2x.png")'''
 
 
 def derive2y(mat):
@@ -62,11 +55,6 @@ def derive2y(mat):
 
 
 d2y = derive2y(mat)
-'''
-new_im3 = Image.fromarray(d2y) # Engeristrement de d2y (image)
-if new_im3.mode != 'RGB':
-    new_im3 = new_im3.convert('RGB')
-new_im3.save("d2y.png")'''
 
 
 def laplacian(mat):
@@ -79,11 +67,6 @@ def laplacian(mat):
 
 
 lap = laplacian(mat)
-'''
-new_im5 = Image.fromarray(lap) # Engeristrement de Laplacian (image)
-if new_im5.mode != 'RGB':
-    new_im5 = new_im5.convert('RGB')
-new_im5.save("laplacian.png")'''
 
 
 for i in range(0, m-1):  # Calcul du log
