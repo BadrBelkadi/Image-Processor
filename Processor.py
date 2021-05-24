@@ -188,6 +188,7 @@ def font():
     return True
 
 
+'''
 root = Tk()
 
 frm = Frame(root)
@@ -214,3 +215,4 @@ btn.pack(side=tk.LEFT, padx=20)
 root.title("PFE")
 root.geometry("600x500")
 root.mainloop()
+'''
