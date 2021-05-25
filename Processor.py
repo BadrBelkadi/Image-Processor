@@ -104,9 +104,9 @@ def text(mar, R):
     return textss
 
 
-img = cv2.imread("Image1.png")  # Reading the image
+img = cv2.imread("Image2.png")  # Reading the image
 
-im = Image.open("Image1.png")  # Opening the image
+im = Image.open("Image2.png")  # Opening the image
 
 # Converting the image from RGB(colored) into Gray image
 
