@@ -1,80 +1,51 @@
 from PIL import Image
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
-from skimage import color
-import math
-from tkinter import *
-from tkinter import filedialog
-import os
-import tkinter as tk
-from PIL import Image, ImageTk
 
 
-img = cv2.imread("448.png")  # Lecture de l'image
-
-im = Image.open("448.png")  # Ouverture de l'image
-
-# Converstion de l'image en mode blanc et noir
-img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-mat = np.array(img)  # Transformation de l'image en matrice
-
-
-# Creation des matrices replis par des zéros
-dx = np.zeros(im.size)
-dy = np.zeros(im.size)
-d2y = np.zeros(im.size)
-d2x = np.zeros(im.size)
-lap = np.zeros(im.size)
-db = np.zeros(im.size)
-l = np.zeros(im.size)
-
-# Extraction des dimensions de l'image
-
-[n, m] = im.size
+'''Second derivative of x
+it takes a matrix as parameter 
+and returns a matrix
+'''
 
 
 def derive2x(mat):
-    for i in range(0, m-1):      # Dérivée deuxiéme de x
+    for i in range(0, m-1):
         for j in range(0, m-1):
             d2x[i, j] = float(mat[i+1, j]) + \
                 float(mat[i-1, j])-2*float(mat[i, j])
     return d2x
 
 
-d2x = derive2x(mat)
+'''Second derivative of y
+it takes a matrix as parameter 
+and returns a matrix
+'''
 
 
 def derive2y(mat):
-    for i in range(0, m-1):      # Dérivée deuxiéme de y
+    for i in range(0, m-1):
         for j in range(0, m-1):
             d2y[i, j] = float(mat[i, j+1]) + \
                 float(mat[i, j-1])-2*float(mat[i, j])
     return d2y
 
 
-d2y = derive2y(mat)
+# Calculating the operator Laplacian
 
 
 def laplacian(mat):
     d2x = derive2x(mat)
     d2y = derive2y(mat)
-    for i in range(0, m-1):      # Laplacian
+    for i in range(0, m-1):
         for j in range(0, m-1):
             lap[i, j] = d2x[i, j]+d2y[i, j]
     return lap
 
-
-lap = laplacian(mat)
-
-
-for i in range(0, m-1):  # Calcul du log
-    for j in range(0, m-1):
-        l[i, j] = np.log(mat[i, j]+0.00001)
+# Shadow equation
 
 
-def font(mat):
+def Shadow(mat):
 
     for i in range(0, m-1):  # Calcul du log
         for j in range(0, m-1):
@@ -90,8 +61,7 @@ def font(mat):
                 db[i, j] = db[i, j]+t*max(0, db2x[i, j])
     return db
 
-
-I = font(mat)
+# This function calculates the exp of each pixel and returns the matrix
 
 
 def expI(mat):
@@ -102,6 +72,8 @@ def expI(mat):
 
     return R
 
+# This function makes sure we don't go over the 256 pixel
+
 
 def normalisation(I, MaxI):
     deca = 0
@@ -110,22 +82,7 @@ def normalisation(I, MaxI):
     I = MaxI*(I-minI)/(deca+(maxI-minI))
     return I
 
-
-mar = np.array(img)
-P = expI(mar)
-
-R = expI(I)
-R = normalisation(R, np.amax(mar))
-P = np.zeros(im.size)
-
-
-new_im6 = Image.fromarray(R)  # Engeristrement de  (image)
-if new_im6.mode != 'RGB':
-    new_im6 = new_im6.convert('RGB')
-new_im6.save("font.png")
-
-
-mar = np.array(img)
+# This function calculates the log of every pixel of the image/matrix and returns it
 
 
 def log(mar):
@@ -135,84 +92,80 @@ def log(mar):
             l[i, j] = np.log(mar[i, j]+0.00001)
     return l
 
-
-l = log(mar)
+# Implementing the text equation   CleanText = initialImage - shadow
 
 
 def text(mar, R):
     textss = np.zeros(im.size, dtype=float)
     for i in range(0, m-1):
         for j in range(0, m-1):
-            textss[i, j] = mar[i, j]-I[i, j]
+            textss[i, j] = mar[i, j]-R[i, j]
 
     return textss
 
 
+img = cv2.imread("Image1.png")  # Reading the image
+
+im = Image.open("Image1.png")  # Opening the image
+
+# Converting the image from RGB(colored) into Gray image
+
+img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+mat = np.array(img)  # Creating an array/matrix from the image
+
+
+# Creating empty arrays/matrix that have the same size as the given image
+dx = np.zeros(im.size)
+dy = np.zeros(im.size)
+d2y = np.zeros(im.size)
+d2x = np.zeros(im.size)
+lap = np.zeros(im.size)
+l = np.zeros(im.size)
+
+# Getting the dimensions of the image
+
+[n, m] = im.size
+
+
+d2x = derive2x(mat)
+
+d2y = derive2y(mat)
+
+lap = laplacian(mat)
+
+I = Shadow(mat)
+
+mar = np.array(img)
+
+P = expI(mar)
+
+R = expI(I)
+
+R = normalisation(R, np.amax(mar))
+
+P = np.zeros(im.size)
+
+mar = np.array(img)
+
+l = log(mar)
+
 textss = text(l, I)
+
 textss = expI(textss)
 
 textss = normalisation(textss, np.amax(mat))
 
+# Saving the image with Clean text
 
-new_im7 = Image.fromarray(textss)  # Engeristrement de  (image)
+new_im7 = Image.fromarray(textss)
 if new_im7.mode != 'RGB':
     new_im7 = new_im7.convert('RGB')
 new_im7.save("text.png")
 
+# Saving the image with shadow only
 
-def showimage():
-    file = filedialog.askopenfilename(initialdir="/", title="choisir une image", filetypes=(
-        ("JPG files", ".jpg"), ("PNG files", ".png"), ("All files", ".")))
-    img = Image.open(file)  # Ouverture de l'image uploadé
-    img.thumbnail((300, 300))
-    img = ImageTk.PhotoImage(img)
-    lbl.configure(image=img)
-    lbl.image = img
-
-    return True
-
-
-def text():
-    img = Image.open('text.png')
-    img = ImageTk.PhotoImage(img)
-    lbl.configure(image=img)
-    lbl.image = img
-    return True
-
-
-def font():
-    img = Image.open('font.png')
-    img = ImageTk.PhotoImage(img)
-    lbl.configure(image=img)
-    lbl.image = img
-    return True
-
-
-'''
-root = Tk()
-
-frm = Frame(root)
-frm.pack(side=BOTTOM, padx=15, pady=15)
-
-lbl = Label(root)
-lbl.pack()
-
-btn = Button(frm, text="Ajouter une image", command=showimage)
-btn.pack(side=tk.LEFT)
-
-
-btn = Button(frm, text="Afficher le texte", command=lambda: text())
-btn.pack(side=tk.LEFT, padx=10)
-
-btn = Button(frm, text="Afficher le font", command=lambda: font())
-btn.pack(side=tk.LEFT, padx=10)
-
-
-btn = Button(frm, text="Exit", command=lambda: exit())
-btn.pack(side=tk.LEFT, padx=20)
-
-
-root.title("PFE")
-root.geometry("600x500")
-root.mainloop()
-'''
+new_im6 = Image.fromarray(R)
+if new_im6.mode != 'RGB':
+    new_im6 = new_im6.convert('RGB')
+new_im6.save("font.png")
