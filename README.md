@@ -1,8 +1,12 @@
 # Image-Processor
 
 This is a project written in Python , the image processor takes an image with text and variable lighting/shadow , after processing the image . 
-It returns an image with clean text only along with an other image showing the previous shodow present in the image.$
+It returns an image with clean text only along with an other image showing the previous shadow present in the given image.
 
+# Libraries Used
+ *<strong>OpenCV<strong/>*<br/>
+ *<strong>Numpy<strong/>*<br/>
+ *<strong>Pillow<strong/>*
 # How To Use
   *Step 1*:
     Make sure you have pip installed on your OS, you can do it by writing the following command on your terminal
